@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link th:href="@{/style.css}" rel="stylesheet" />
+    <title>Suppliers</title>
+</head>
+<body>
+<nav class="navbar">
+    <a href="/allTenders" class="navbar-link">All Tenders</a>
+    <a href="/allSuppliers" class="navbar-link">All Suppliers</a>
+</nav>
+
+<div class="button-container">
+    <a href="/addSupplier" class="button">Add Supplier</a>
+</div>
+
+<h1>All Suppliers</h1>
+<table  id="suppliersTable">
+    <thead>
+        <tr>
+            <td>ID</td>
+            <td>Source ID</td>
+            <td>Name</td>
+            <td>Slug</td>
+            <td>Edit</td>
+            <td>Delete</td>
+         </tr>
+    </thead>
+
+    <tbody>
+        <tr th:each="supplier : ${suppliers}" class="supplier-row">
+            <td th:text="${supplier.id}"></td>
+            <td th:text="${supplier.source_id}"></td>
+            <td th:text="${supplier.name}"></td>
+            <td th:text="${supplier.slug}"></td>
+            <td>
+                <a th:href="@{/updateSupplier(id=${supplier.source_id})}">Update Supplier</a>
+            </td>
+            <td>
+                <a th:href="@{/removeSupplier(id=${supplier.source_id})}">Remove Supplier</a>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

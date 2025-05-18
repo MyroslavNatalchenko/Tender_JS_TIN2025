@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link th:href="@{/style.css}" rel="stylesheet" />
+    <title>Tenders</title>
+</head>
+<body>
+<nav class="navbar">
+    <a href="/allTenders" class="navbar-link">All Tenders</a>
+    <a href="/allSuppliers" class="navbar-link">All Suppliers</a>
+</nav>
+
+<h1>All Tenders</h1>
+<div class="button-container">
+    <a href="/addTender" class="button">Add Tender</a>
+</div>
+<table id="tendersTable">
+    <thead>
+        <tr>
+            <td>ID</td>
+            <td>Source ID</td>
+            <td>Date</td>
+            <td>Deadline Date</td>
+            <td>DD Length Date</td>
+            <td>Title</td>
+            <td>Category</td>
+            <td>SID</td>
+            <td>Source URL</td>
+            <td>More Information</td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr th:each="tender: ${tenders}" class="tender-row" data-id="[[${tender.sourceId}]]">
+            <td th:text="${tender.id}"></td>
+            <td th:text="${tender.sourceId}" class="source-id"></td>
+            <td th:text="${tender.date}" class="date"></td>
+            <td th:text="${tender.deadlineDate}" class="deadline-date"></td>
+            <td th:text="${tender.deadlineLengthDays}" class="deadline-length"></td>
+            <td th:text="${tender.title}" class="title"></td>
+            <td th:text="${tender.category}" class="category"></td>
+            <td th:text="${tender.sid}" class="sid"></td>
+            <td>
+                <a th:href="${tender.sourceUrl}" th:text="${tender.sourceUrl}" class="source-url"></a>
+            </td>
+            <td>
+                <a th:href="@{/TenderDetails(id=${tender.sourceId})}" class="details-link">Tender Details</a>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+
+</body>
+</html>

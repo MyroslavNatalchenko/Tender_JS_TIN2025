@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <link th:href="@{/style.css}" rel="stylesheet" />
+    <meta charset="UTF-8" />
+    <link href="/style.css" rel="stylesheet" />
     <title>Tender Details</title>
 </head>
 <body>
@@ -11,7 +11,7 @@
     <a href="/allTenders" class="navbar-link">All Tenders</a>
 </nav>
 
-<h1 th:text="${id}"></h1>
+<h1 id="tender-id-header"></h1>
 
 <h1>Tender</h1>
 <table>
@@ -26,93 +26,46 @@
         <td>Update</td>
         <td>Remove</td>
     </tr>
-    <tr id="tender-details">
-        <td th:text="${tender.date}" id="tender-date"></td>
-        <td th:text="${tender.deadlineDate}" id="tender-deadline-date"></td>
-        <td th:text="${tender.deadlineLengthDays}" id="tender-deadline-length"></td>
-        <td th:text="${tender.title}" id="tender-title"></td>
-        <td th:text="${tender.category}" id="tender-category"></td>
-        <td th:text="${tender.sid}" id="tender-sid"></td>
-        <td th:text="${tender.sourceUrl}" id="tender-source-url"></td>
-        <td>
-            <a th:href="@{/updateTender(id=${tender.sourceId})}" id="update-tender-link">Update Tender</a>
-        </td>
-        <td>
-            <a th:href="@{/removeTender(id=${tender.sourceId})}" id="delete-tender-link">Remove Tender</a>
-        </td>
-    </tr>
+    <tr id="tender-details"></tr>
 </table>
 
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const params = new URLSearchParams(window.location.search);
+        const tenderId = params.get("id");
 
-<h1>Purchaser</h1>
-<table>
-    <tr>
-        <td>ID</td>
-        <td>Source ID</td>
-        <td>SID</td>
-        <td>NAME</td>
-        <td>update</td>
-    </tr>
-    <tr id="purchaser-details">
-        <td th:text="${purchaser.id}" id="purchaser-id"></td>
-        <td th:text="${purchaser.sourceId}" id="purchaser-text"></td>
-        <td th:text="${purchaser.sid}" id="purchaser-sid"></td>
-        <td th:text="${purchaser.name}" id="purchaser-name"></td>
-        <td>
-            <a th:href="@{/updatePurchaser(id=${purchaser.tender_src_id})}" id="purchaser-link">Update Purchaser</a>
-        </td>
-    </tr>
-</table>
+        if (!tenderId) {
+            document.body.innerHTML = "<p>Missing tender ID in URL.</p>";
+            return;
+        }
 
-<h1>Type</h1>
-<table>
-    <tr>
-        <td>ID</td>
-        <td>Source ID</td>
-        <td>NAME</td>
-        <td>SLUG</td>
-        <td>Update</td>
-    </tr>
-    <tr id="type-details">
-        <td th:text="${type.id}" id="type-id"></td>
-        <td th:text="${type.sourceId}" id="type-sourceId"></td>
-        <td th:text="${type.name}" id="type-name"></td>
-        <td th:text="${type.slug}" id="type-slug"></td>
-        <td>
-            <a th:href="@{/updateType(id=${type.tender_src_id})}" id="type-link">Update Type</a>
-        </td>
-    </tr>
-</table>
+        document.getElementById("tender-id-header").textContent = "Tender ID: " + tenderId;
 
-<h1>All Awarded</h1>
-<table>
-    <tr>
-        <td>ID</td>
-        <td>Date</td>
-        <td>Value For One</td>
-        <td>Value For Two</td>
-        <td>Value For Three</td>
-        <td>Suppliers ID</td>
-        <td>Count</td>
-        <td>Offers Count</td>
-        <td>Value</td>
-        <td>Update</td>
-    </tr>
-    <tr th:each="awarded : ${awardeds}" id="awarded-details">
-        <td th:text="${awarded.id}" id="awarded-id"></td>
-        <td th:text="${awarded.date}" id="awarded-date"></td>
-        <td th:text="${awarded.valueForOne}" id="awarded-value-for-one"></td>
-        <td th:text="${awarded.valueForTwo}" id="awarded-value-for-two"></td>
-        <td th:text="${awarded.valueForThree}" id="awarded-value-for-three"></td>
-        <td th:text="${awarded.suppliersId}" id="awarded-suppliersId"></td>
-        <td th:text="${awarded.count}" id="awarded-count"></td>
-        <td th:text="${awarded.offersCount}" id="awarded-offers-count"></td>
-        <td th:text="${awarded.value}" id="awarded-value"></td>
-        <td>
-            <a th:href="@{/updateAwarded(id=${awarded.id})}" id="awarded-link">Update Awarded</a>
-        </td>
-    </tr>
-</table>
+        fetch(`http://127.0.0.1:8080/tenders/${tenderId}`)
+            .then(response => {
+                if (!response.ok) throw new Error("Tender not found");
+                return response.json();
+            })
+            .then(tender => {
+                const row = document.getElementById("tender-details");
+                row.innerHTML = `
+                    <td>${tender.date ?? ''}</td>
+                    <td>${tender.deadlineDate ?? '-'}</td>
+                    <td>${tender.deadlineLengthDays ?? '-'}</td>
+                    <td>${tender.title ?? ''}</td>
+                    <td>${tender.category ?? ''}</td>
+                    <td>${tender.sid ?? ''}</td>
+                    <td><a href="${tender.sourceUrl}" target="_blank">${tender.sourceUrl}</a></td>
+                    <td><a href="/updateTender?id=${tender.sourceId}">Update</a></td>
+                    <td><a href="/removeTender?id=${tender.sourceId}">Remove</a></td>
+                `;
+            })
+            .catch(err => {
+                console.error("Error:", err);
+                document.getElementById("tender-details").innerHTML = "<td colspan='9'>Tender not found or server error.</td>";
+            });
+    });
+</script>
 
 </body>
 </html>

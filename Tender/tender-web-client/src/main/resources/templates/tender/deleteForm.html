@@ -2,41 +2,76 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Update Tender</title>
-    <link th:href="@{/style_forms.css}" rel="stylesheet" />
+    <title>Remove Tender</title>
+    <link href="/style_forms.css" rel="stylesheet" />
 </head>
 <body>
 <h1>Remove Tender</h1>
-<h1 th:text="${tender.sourceId}"></h1>
+<h2 id="sourceIdDisplay"></h2>
 
-<form action="#" th:action="@{/removeTender}" th:object="${tender}" method="post">
-    <input type="number" id="id" th:field="*{id}" hidden="hidden">
+<form id="removeTenderForm">
+    <input type="number" id="id" name="id" hidden>
 
     <label for="sourceId">Source ID:</label>
-    <input type="number" id="sourceId" th:field="*{sourceId}" required readonly>
+    <input type="number" id="sourceId" name="sourceId" readonly required>
 
-    <label for="date" hidden>Start Date:</label>
-    <input type="date" id="date" placeholder="Enter Date" th:field="*{date}" hidden="hidden">
-
-    <label for="deadlineDate" hidden>Deadline Date:</label>
-    <input type="date" id="deadlineDate" placeholder="yyyy-DD-mm" th:field="*{deadlineDate}" hidden="hidden">
-
-    <label for="deadlineLengthDays" hidden>Deadline Length (Days):</label>
-    <input type="number" id="deadlineLengthDays" th:field="*{deadlineLengthDays}" hidden="hidden">
-
-    <label for="title" hidden>Title:</label>
-    <input type="text" id="title" placeholder="Enter Title" th:field="*{title}" hidden="hidden">
-
-    <label for="category" hidden>Category:</label>
-    <input type="text" id="category" placeholder="Enter Category" th:field="*{category}" hidden="hidden">
-
-    <label for="sid" hidden>SID:</label>
-    <input type="number" id="sid" placeholder="Enter SID" th:field="*{sid}" hidden="hidden">
-
-    <label for="sourceUrl" hidden>Source URL:</label>
-    <input type="text" id="sourceUrl" placeholder="Enter Source URL" th:field="*{sourceUrl}" hidden="hidden">
-
-    <input id="submit" type="submit" value="Submit" />
+    <button id="submit" type="submit">Confirm Delete</button>
 </form>
+
+<script>
+    function getSourceIdFromURL() {
+        const params = new URLSearchParams(window.location.search);
+        return params.get('id');
+    }
+
+    function fillForm(tender) {
+        document.getElementById("id").value = tender.id;
+        document.getElementById("sourceId").value = tender.sourceId;
+        document.getElementById("sourceIdDisplay").textContent = `Source ID: ${tender.sourceId}`;
+    }
+
+    async function loadTender(id) {
+        try {
+            const response = await fetch(`https://tin-web-api.onrender.com/tenders/${id}`);
+            if (!response.ok) {
+                throw new Error(`Tender not found: ${response.status}`);
+            }
+            const tender = await response.json();
+            fillForm(tender);
+        } catch (error) {
+            alert("Failed to load tender: " + error.message);
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const id = getSourceIdFromURL();
+        if (!id) {
+            alert("No ID provided in URL.");
+            return;
+        }
+
+        loadTender(id);
+
+        document.getElementById("removeTenderForm").addEventListener("submit", async (event) => {
+            event.preventDefault();
+
+            const sourceId = parseInt(document.getElementById("sourceId").value);
+
+            try {
+                const response = await fetch(`https://tin-web-api.onrender.com/tenders/delete/${sourceId}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    window.location.href = "/allTenders";
+                } else {
+                    alert('Error deleting tender. Status: ' + response.status);
+                }
+            } catch (error) {
+                alert("Failed to delete tender: " + error.message);
+            }
+        });
+    });
+</script>
 </body>
 </html>

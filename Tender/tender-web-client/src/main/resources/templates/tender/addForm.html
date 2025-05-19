@@ -2,78 +2,133 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Update Tender</title>
-    <link th:href="@{/style_forms.css}" rel="stylesheet" />
-    <script>
-        const takenIDs = [[${TakenIDs}]];
-
-        function validateSourceId() {
-            const sourceIdInput = document.getElementById("sourceId");
-            const submitButton = document.getElementById("submit");
-            const errorField = document.getElementById("errorSourceId");
-            const sourceId = parseInt(sourceIdInput.value);
-
-            if (takenIDs.includes(sourceId)) {
-                errorField.textContent = "This Source ID is already taken.";
-                submitButton.disabled = true;
-            } else {
-                errorField.textContent = "";
-                submitButton.disabled = false;
-            }
-        }
-
-        function validateDates() {
-            const dateInput = document.getElementById("date");
-            const deadlineDateInput = document.getElementById("deadlineDate");
-            const errorField = document.getElementById("errorDates");
-            const submitButton = document.getElementById("submit");
-
-            const dateValue = new Date(dateInput.value);
-            const deadlineValue = new Date(deadlineDateInput.value);
-
-            if (deadlineValue <= dateValue) {
-                errorField.textContent = "Deadline/Start date must be after/before the start/deadline date.";
-                submitButton.disabled = true;
-            } else {
-                errorField.textContent = "";
-                submitButton.disabled = false;
-            }
-        }
-    </script>
+    <title>Add Tender</title>
+    <link href="/style_forms.css" rel="stylesheet" />
 </head>
 <body>
 <h1>Add Tender</h1>
 
-<form action="#" th:action="@{/addTender}" th:object="${tender}" method="post">
-    <input type="number" th:field="*{id}" hidden="hidden">
-
+<form id="tenderForm">
     <label for="sourceId">Source ID:</label>
-    <input type="number" id="sourceId" th:field="*{sourceId}" required oninput="validateSourceId()">
+    <input type="number" id="sourceId" name="sourceId" required>
     <span id="errorSourceId" style="color: red; font-size: small;"></span>
 
     <label for="date">Start Date:</label>
-    <input type="date" id="date" th:field="*{date}" required oninput="validateDates()">
+    <input type="date" id="date" name="date" required>
 
     <label for="deadlineDate">Deadline Date:</label>
-    <input type="date" id="deadlineDate" placeholder="yyyy-MM-dd" th:field="*{deadlineDate}" required oninput="validateDates()">
+    <input type="date" id="deadlineDate" name="deadlineDate" required>
     <span id="errorDates" style="color: red; font-size: small;"></span>
 
     <label for="deadlineLengthDays">Deadline Length (Days):</label>
-    <input type="number" id="deadlineLengthDays" th:field="*{deadlineLengthDays}" required>
+    <input type="number" id="deadlineLengthDays" name="deadlineLengthDays" required>
 
     <label for="title">Title:</label>
-    <input type="text" id="title" placeholder="Enter Title" th:field="*{title}" required>
+    <input type="text" id="title" name="title" required>
 
     <label for="category">Category:</label>
-    <input type="text" id="category" placeholder="Enter Category" th:field="*{category}" required>
+    <input type="text" id="category" name="category" required>
 
     <label for="sid">SID:</label>
-    <input type="number" id="sid" placeholder="Enter SID" th:field="*{sid}" required>
+    <input type="number" id="sid" name="sid" required>
 
     <label for="sourceUrl">Source URL:</label>
-    <input type="text" id="sourceUrl" placeholder="Enter Source URL" th:field="*{sourceUrl}" required>
+    <input type="text" id="sourceUrl" name="sourceUrl" required>
 
-    <input id="submit" type="submit" value="Submit" />
+    <button type="submit" id="submit">Submit</button>
 </form>
+
+<script>
+    let takenIDs = [];
+
+    async function loadTakenIDs() {
+        try {
+            const response = await fetch('https://tin-web-api.onrender.com/tenders/allTenders');
+            if (!response.ok) {
+                throw new Error(`Failed to fetch tenders: ${response.status}`);
+            }
+            const tenders = await response.json();
+            takenIDs = tenders.map(t => t.sourceId);
+        } catch (error) {
+            console.error('Error loading takenIDs:', error);
+        }
+    }
+
+    const form = document.getElementById('tenderForm');
+    const sourceIdInput = document.getElementById('sourceId');
+    const dateInput = document.getElementById('date');
+    const deadlineDateInput = document.getElementById('deadlineDate');
+    const errorSourceId = document.getElementById('errorSourceId');
+    const errorDates = document.getElementById('errorDates');
+
+    function validateSourceId() {
+        const id = parseInt(sourceIdInput.value);
+        if (takenIDs.includes(id)) {
+            errorSourceId.textContent = "This Source ID is already taken.";
+            return false;
+        } else {
+            errorSourceId.textContent = "";
+            return true;
+        }
+    }
+
+    function validateDates() {
+        const dateVal = new Date(dateInput.value);
+        const deadlineVal = new Date(deadlineDateInput.value);
+        if (deadlineVal <= dateVal) {
+            errorDates.textContent = "Deadline must be after start date.";
+            return false;
+        } else {
+            errorDates.textContent = "";
+            return true;
+        }
+    }
+
+    sourceIdInput.addEventListener('input', validateSourceId);
+    dateInput.addEventListener('input', validateDates);
+    deadlineDateInput.addEventListener('input', validateDates);
+
+    form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        const isSourceIdValid = validateSourceId();
+        const areDatesValid = validateDates();
+        if (!isSourceIdValid || !areDatesValid) return;
+
+        const tenderData = {
+            sourceId: parseInt(form.sourceId.value),
+            date: form.date.value,
+            deadlineDate: form.deadlineDate.value,
+            deadlineLengthDays: parseInt(form.deadlineLengthDays.value),
+            title: form.title.value,
+            category: form.category.value,
+            sid: parseInt(form.sid.value),
+            sourceUrl: form.sourceUrl.value
+        };
+
+        try {
+            const response = await fetch('https://tin-web-api.onrender.com/tenders/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(tenderData)
+            });
+
+            if (response.ok) {
+                // Перенаправление на список тендеров
+                window.location.href = "/allTenders";
+            } else {
+                alert('Error adding tender. Server responded with status: ' + response.status);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Failed to send data.');
+        }
+    });
+
+    // Загрузка занятых ID при загрузке страницы
+    document.addEventListener('DOMContentLoaded', loadTakenIDs);
+</script>
 </body>
 </html>

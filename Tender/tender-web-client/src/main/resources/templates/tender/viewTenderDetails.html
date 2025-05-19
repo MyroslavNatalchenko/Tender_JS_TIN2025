@@ -41,7 +41,7 @@
 
         document.getElementById("tender-id-header").textContent = "Tender ID: " + tenderId;
 
-        fetch(`http://127.0.0.1:8080/tenders/${tenderId}`)
+        fetch(`https://tin-web-api.onrender.com/tenders/${tenderId}`)
             .then(response => {
                 if (!response.ok) throw new Error("Tender not found");
                 return response.json();

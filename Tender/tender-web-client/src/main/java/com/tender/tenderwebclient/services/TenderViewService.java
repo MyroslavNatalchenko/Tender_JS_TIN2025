@@ -15,7 +15,7 @@ import java.util.List;
 public class TenderViewService implements ITenderView{
     @Autowired
     private RestClient restClient;
-    private String tenderBaseUrl = "http://localhost:8080/tenders";
+    private String tenderBaseUrl = "https://tin-web-api.onrender.com/tenders";
 
     public TenderViewService(RestClient restClient,
                              @Value("${tender.base-url}") String tenderBaseUrl) {

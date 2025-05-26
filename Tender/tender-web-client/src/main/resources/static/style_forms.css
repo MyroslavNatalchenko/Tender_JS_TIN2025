@@ -58,3 +58,32 @@ input[readonly] {
 #submit:hover {
     background-color: #45a049;
 }
+
+@media (max-width: 480px) {
+    body {
+        height: auto;
+        padding: 20px 10px;
+    }
+
+    form {
+        width: 100%;
+        padding: 15px;
+    }
+
+    h1 {
+        font-size: 1.4em;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="date"],
+    select {
+        font-size: 14px;
+        padding: 8px;
+    }
+
+    #submit, #back {
+        font-size: 14px;
+        padding: 10px;
+    }
+}

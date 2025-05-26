@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
     <link href="/style.css" rel="stylesheet" />
     <title>Tender Details</title>
 </head>
@@ -11,14 +12,14 @@
     <a href="/allTenders" class="navbar-link">All Tenders</a>
 </nav>
 
-<h1 id="tender-id-header"></h1>
+<h1 id="tender-id-heading">Tender ID: </h1>
 
-<h1>Tender</h1>
+<h2>Tender</h2>
 <table>
     <tr>
         <td>Date</td>
         <td>Deadline Date</td>
-        <td>DD Length Date</td>
+        <td>DD Length</td>
         <td>Title</td>
         <td>Category</td>
         <td>SID</td>
@@ -26,44 +27,157 @@
         <td>Update</td>
         <td>Remove</td>
     </tr>
-    <tr id="tender-details"></tr>
+    <tr id="tender-row"></tr>
+</table>
+
+<h2>Purchaser</h2>
+<table>
+    <tr>
+        <td>ID</td>
+        <td>Source ID</td>
+        <td>SID</td>
+        <td>Name</td>
+        <td>Update</td>
+    </tr>
+    <tr id="purchaser-row"></tr>
+</table>
+
+<h2>Type</h2>
+<table>
+    <tr>
+        <td>ID</td>
+        <td>Source ID</td>
+        <td>Name</td>
+        <td>Slug</td>
+        <td>Update</td>
+    </tr>
+    <tr id="type-row"></tr>
+</table>
+
+<h2>All Awarded</h2>
+<table>
+    <thead>
+    <tr>
+        <td>ID</td>
+        <td>Date</td>
+        <td>Value One</td>
+        <td>Value Two</td>
+        <td>Value Three</td>
+        <td>Suppliers ID</td>
+        <td>Count</td>
+        <td>Offers Count</td>
+        <td>Total Value</td>
+        <td>Update</td>
+    </tr>
+    </thead>
+    <tbody id="awarded-body"></tbody>
 </table>
 
 <script>
-    document.addEventListener("DOMContentLoaded", () => {
+    const baseUrl = "https://tin-web-api.onrender.com/tenders";
+
+    function getTenderIdFromURL() {
         const params = new URLSearchParams(window.location.search);
-        const tenderId = params.get("id");
+        return params.get("id");
+    }
 
-        if (!tenderId) {
-            document.body.innerHTML = "<p>Missing tender ID in URL.</p>";
-            return;
+    function createLinkCell(href, text) {
+        const td = document.createElement("td");
+        const a = document.createElement("a");
+        a.href = href;
+        a.textContent = text;
+        td.appendChild(a);
+        return td;
+    }
+
+    async function loadTenderDetails(id) {
+        try {
+            const [tenderRes, purchaserRes, typeRes, awardedRes] = await Promise.all([
+                fetch(`${baseUrl}/${id}`),
+                fetch(`${baseUrl}/PurchaserTender/${id}`),
+                fetch(`${baseUrl}/TypeTender/${id}`),
+                fetch(`${baseUrl}/AwardedTender/${id}`)
+            ]);
+
+            if (!tenderRes.ok) throw new Error("Tender not found");
+            const tender = await tenderRes.json();
+            document.getElementById("tender-id-heading").textContent = `Tender ID: ${tender.sourceId}`;
+            renderTender(tender);
+
+            if (purchaserRes.ok) renderPurchaser(await purchaserRes.json());
+            if (typeRes.ok) renderType(await typeRes.json());
+            if (awardedRes.ok) renderAwardeds(await awardedRes.json());
+
+        } catch (error) {
+            console.error("Error loading tender details:", error);
+            alert("Failed to load tender details.");
         }
+    }
 
-        document.getElementById("tender-id-header").textContent = "Tender ID: " + tenderId;
+    function renderTender(t) {
+        const tr = document.getElementById("tender-row");
+        tr.innerHTML = `
+            <td>${t.date ?? ""}</td>
+            <td>${t.deadlineDate ?? ""}</td>
+            <td>${t.deadlineLengthDays ?? ""}</td>
+            <td>${t.title ?? ""}</td>
+            <td>${t.category ?? ""}</td>
+            <td>${t.sid ?? ""}</td>
+            <td><a href="${t.sourceUrl}" target="_blank">${t.sourceUrl}</a></td>
+        `;
+        tr.appendChild(createLinkCell(`/updateTender?id=${t.sourceId}`, "Update"));
+        tr.appendChild(createLinkCell(`/removeTender?id=${t.sourceId}`, "Remove"));
+    }
 
-        fetch(`https://tin-web-api.onrender.com/tenders/${tenderId}`)
-            .then(response => {
-                if (!response.ok) throw new Error("Tender not found");
-                return response.json();
-            })
-            .then(tender => {
-                const row = document.getElementById("tender-details");
-                row.innerHTML = `
-                    <td>${tender.date ?? ''}</td>
-                    <td>${tender.deadlineDate ?? '-'}</td>
-                    <td>${tender.deadlineLengthDays ?? '-'}</td>
-                    <td>${tender.title ?? ''}</td>
-                    <td>${tender.category ?? ''}</td>
-                    <td>${tender.sid ?? ''}</td>
-                    <td><a href="${tender.sourceUrl}" target="_blank">${tender.sourceUrl}</a></td>
-                    <td><a href="/updateTender?id=${tender.sourceId}">Update</a></td>
-                    <td><a href="/removeTender?id=${tender.sourceId}">Remove</a></td>
-                `;
-            })
-            .catch(err => {
-                console.error("Error:", err);
-                document.getElementById("tender-details").innerHTML = "<td colspan='9'>Tender not found or server error.</td>";
-            });
+    function renderPurchaser(p) {
+        const tr = document.getElementById("purchaser-row");
+        tr.innerHTML = `
+            <td>${p.id}</td>
+            <td>${p.sourceId}</td>
+            <td>${p.sid}</td>
+            <td>${p.name}</td>
+        `;
+        tr.appendChild(createLinkCell(`/updatePurchaser?id=${p.tender_src_id}`, "Update"));
+    }
+
+    function renderType(t) {
+        const tr = document.getElementById("type-row");
+        tr.innerHTML = `
+            <td>${t.id}</td>
+            <td>${t.sourceId}</td>
+            <td>${t.name}</td>
+            <td>${t.slug}</td>
+        `;
+        tr.appendChild(createLinkCell(`/updateType?id=${t.tender_src_id}`, "Update"));
+    }
+
+    function renderAwardeds(list) {
+        const tbody = document.getElementById("awarded-body");
+        list.forEach(a => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td>${a.id}</td>
+                <td>${a.date ?? ""}</td>
+                <td>${a.valueForOne ?? ""}</td>
+                <td>${a.valueForTwo ?? ""}</td>
+                <td>${a.valueForThree ?? ""}</td>
+                <td>${a.suppliersId ?? ""}</td>
+                <td>${a.count ?? ""}</td>
+                <td>${a.offersCount ?? ""}</td>
+                <td>${a.value ?? ""}</td>
+            `;
+            tr.appendChild(createLinkCell(`/updateAwarded?id=${a.id}`, "Update"));
+            tbody.appendChild(tr);
+        });
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const id = getTenderIdFromURL();
+        if (id) {
+            loadTenderDetails(id);
+        } else {
+            alert("No tender ID provided.");
+        }
     });
 </script>
 

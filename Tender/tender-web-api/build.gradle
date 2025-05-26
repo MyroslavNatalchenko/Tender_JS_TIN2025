@@ -5,12 +5,8 @@ plugins {
 }
 
 bootJar {
-    archiveFileName = 'tender-web-api-fat.jar'
+    archiveFileName = 'tender-web-api.jar'
     launchScript() // (опционально: делает JAR исполняемым в *nix)
-}
-
-jar {
-    enabled = false // отключить обычный jar, чтобы не мешал
 }
 
 group = 'com.tender'

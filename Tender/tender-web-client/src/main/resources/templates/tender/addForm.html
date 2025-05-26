@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
     <title>Add Tender</title>
     <link href="/style_forms.css" rel="stylesheet" />
@@ -116,7 +117,6 @@
             });
 
             if (response.ok) {
-                // Перенаправление на список тендеров
                 window.location.href = "/allTenders";
             } else {
                 alert('Error adding tender. Server responded with status: ' + response.status);
@@ -127,7 +127,6 @@
         }
     });
 
-    // Загрузка занятых ID при загрузке страницы
     document.addEventListener('DOMContentLoaded', loadTakenIDs);
 </script>
 </body>

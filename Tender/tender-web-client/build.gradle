@@ -4,6 +4,15 @@ plugins {
 	id 'io.spring.dependency-management' version '1.1.7'
 }
 
+bootJar {
+	archiveFileName = 'tender-web-client.jar'
+	launchScript() // (опционально: делает JAR исполняемым в *nix)
+}
+
+jar {
+	enabled = false // отключить обычный jar, чтобы не мешал
+}
+
 group = 'com.tender'
 version = '0.0.1-SNAPSHOT'
 

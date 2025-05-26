@@ -5,23 +5,106 @@
     <meta charset="UTF-8">
     <title>Update Supplier</title>
     <link th:href="@{/style_forms.css}" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
-<h1>Update Supplier</h1>
+<div class="container">
+    <h1>Update Supplier</h1>
 
-<form action="#" th:action="@{/updateSupplier}" th:object="${supplier}" method="post">
-    <input type="number" th:field="*{id}" hidden="hidden">
+    <form action="#" th:action="@{/updateSupplier}" th:object="${supplier}" method="post" class="modern-form">
+        <input type="number" th:field="*{id}" hidden="hidden">
 
-    <label for="sourceId">Source ID:</label>
-    <input type="number" id="sourceId" th:field="*{source_id}" readonly>
+        <div class="form-group">
+            <label for="sourceId">Source ID:</label>
+            <input type="number" id="sourceId" th:field="*{source_id}" readonly class="form-input readonly-input">
+        </div>
 
-    <label for="name">Supplier Name:</label>
-    <input type="text" id="name" th:field="*{name}" placeholder="Enter supplier name" required>
+        <div class="form-group">
+            <label for="name">Supplier Name:</label>
+            <input type="text" id="name" th:field="*{name}" placeholder="Enter supplier name" required class="form-input">
+        </div>
 
-    <label for="slug">Slug:</label>
-    <input type="text" id="slug" th:field="*{slug}" placeholder="Enter slug" required>
+        <div class="form-group">
+            <label for="slug">Slug:</label>
+            <input type="text" id="slug" th:field="*{slug}" placeholder="Enter slug" required class="form-input">
+        </div>
 
-    <input id="submit" type="submit" value="Submit">
-</form>
+        <div class="button-group">
+            <input id="submit" type="submit" value="Submit" class="submit-button">
+        </div>
+    </form>
+</div>
+
+<style>
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .modern-form {
+        background: white;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        color: #2c3e50;
+    }
+
+    .form-input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        font-size: 14px;
+        transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    .form-input:focus {
+        border-color: #3498db;
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+    }
+
+    .readonly-input {
+        background-color: #f8f9fa;
+        cursor: not-allowed;
+    }
+
+    .button-group {
+        margin-top: 30px;
+        text-align: right;
+    }
+
+    .submit-button {
+        background-color: #3498db;
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .submit-button:hover {
+        background-color: #2980b9;
+    }
+
+    .submit-button:disabled {
+        background-color: #95a5a6;
+        cursor: not-allowed;
+    }
+</style>
 </body>
 </html>

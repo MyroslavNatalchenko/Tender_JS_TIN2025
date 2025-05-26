@@ -4,75 +4,109 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
     <link href="/style.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;500;600&display=swap" rel="stylesheet">
     <title>Tender Details</title>
 </head>
 <body>
-
 <nav class="navbar">
     <a href="/allTenders" class="navbar-link">All Tenders</a>
+    <a href="/allSuppliers" class="navbar-link">All Suppliers</a>
 </nav>
 
-<h1 id="tender-id-heading">Tender ID: </h1>
+<div class="container">
+    <div id="loading" class="loading">Loading tender details...</div>
+    <div id="content" style="display: none;">
+        <h1 id="tender-id-heading" class="page-title">Tender ID: </h1>
 
-<h2>Tender</h2>
-<table>
-    <tr>
-        <td>Date</td>
-        <td>Deadline Date</td>
-        <td>DD Length</td>
-        <td>Title</td>
-        <td>Category</td>
-        <td>SID</td>
-        <td>Source URL</td>
-        <td>Update</td>
-        <td>Remove</td>
-    </tr>
-    <tr id="tender-row"></tr>
-</table>
+        <div class="section">
+            <h2 class="section-title">Tender Information</h2>
+            <div class="table-container">
+                <table class="details-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Deadline Date</th>
+                            <th>DD Length</th>
+                            <th>Title</th>
+                            <th>Category</th>
+                            <th>SID</th>
+                            <th>Source URL</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr id="tender-row"></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
 
-<h2>Purchaser</h2>
-<table>
-    <tr>
-        <td>ID</td>
-        <td>Source ID</td>
-        <td>SID</td>
-        <td>Name</td>
-        <td>Update</td>
-    </tr>
-    <tr id="purchaser-row"></tr>
-</table>
+        <div class="section">
+            <h2 class="section-title">Purchaser Information</h2>
+            <div class="table-container">
+                <table class="details-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Source ID</th>
+                            <th>SID</th>
+                            <th>Name</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr id="purchaser-row"></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
 
-<h2>Type</h2>
-<table>
-    <tr>
-        <td>ID</td>
-        <td>Source ID</td>
-        <td>Name</td>
-        <td>Slug</td>
-        <td>Update</td>
-    </tr>
-    <tr id="type-row"></tr>
-</table>
+        <div class="section">
+            <h2 class="section-title">Type Information</h2>
+            <div class="table-container">
+                <table class="details-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Source ID</th>
+                            <th>Name</th>
+                            <th>Slug</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr id="type-row"></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
 
-<h2>All Awarded</h2>
-<table>
-    <thead>
-    <tr>
-        <td>ID</td>
-        <td>Date</td>
-        <td>Value One</td>
-        <td>Value Two</td>
-        <td>Value Three</td>
-        <td>Suppliers ID</td>
-        <td>Count</td>
-        <td>Offers Count</td>
-        <td>Total Value</td>
-        <td>Update</td>
-    </tr>
-    </thead>
-    <tbody id="awarded-body"></tbody>
-</table>
+        <div class="section">
+            <h2 class="section-title">Awarded Information</h2>
+            <div class="table-container">
+                <table class="details-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Date</th>
+                            <th>Value One</th>
+                            <th>Value Two</th>
+                            <th>Value Three</th>
+                            <th>Suppliers ID</th>
+                            <th>Count</th>
+                            <th>Offers Count</th>
+                            <th>Total Value</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="awarded-body"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
 
+<script src="/main.js"></script>
 <script>
     const baseUrl = "https://tin-web-api.onrender.com/tenders";
 
@@ -81,16 +115,23 @@
         return params.get("id");
     }
 
-    function createLinkCell(href, text) {
+    function createActionCell(actions) {
         const td = document.createElement("td");
-        const a = document.createElement("a");
-        a.href = href;
-        a.textContent = text;
-        td.appendChild(a);
+        td.className = "actions";
+        actions.forEach(({href, text, className}) => {
+            const a = document.createElement("a");
+            a.href = href;
+            a.textContent = text;
+            a.className = `button action-button ${className}`;
+            td.appendChild(a);
+        });
         return td;
     }
 
     async function loadTenderDetails(id) {
+        const content = document.getElementById('content');
+        const loading = document.getElementById('loading');
+
         try {
             const [tenderRes, purchaserRes, typeRes, awardedRes] = await Promise.all([
                 fetch(`${baseUrl}/${id}`),
@@ -101,16 +142,31 @@
 
             if (!tenderRes.ok) throw new Error("Tender not found");
             const tender = await tenderRes.json();
-            document.getElementById("tender-id-heading").textContent = `Tender ID: ${tender.sourceId}`;
+            document.getElementById("tender-id-heading").textContent = `Tender #${tender.sourceId}`;
             renderTender(tender);
 
             if (purchaserRes.ok) renderPurchaser(await purchaserRes.json());
             if (typeRes.ok) renderType(await typeRes.json());
             if (awardedRes.ok) renderAwardeds(await awardedRes.json());
 
+            loading.style.display = 'none';
+            content.style.display = 'block';
+            content.classList.add('fade-in');
+
         } catch (error) {
             console.error("Error loading tender details:", error);
-            alert("Failed to load tender details.");
+            showError("Failed to load tender details");
+            document.body.innerHTML = `
+                <div class="error-container">
+                    <div class="error-box">
+                        <div class="error-icon">⚠️</div>
+                        <h1 class="error-title">Error</h1>
+                        <p class="error-message">Failed to load tender details</p>
+                        <div class="button-container">
+                            <a href="/allTenders" class="button">Return to Tenders</a>
+                        </div>
+                    </div>
+                </div>`;
         }
     }
 
@@ -123,10 +179,12 @@
             <td>${t.title ?? ""}</td>
             <td>${t.category ?? ""}</td>
             <td>${t.sid ?? ""}</td>
-            <td><a href="${t.sourceUrl}" target="_blank">${t.sourceUrl}</a></td>
+            <td><a href="${t.sourceUrl}" target="_blank" class="url-link">${t.sourceUrl}</a></td>
         `;
-        tr.appendChild(createLinkCell(`/updateTender?id=${t.sourceId}`, "Update"));
-        tr.appendChild(createLinkCell(`/removeTender?id=${t.sourceId}`, "Remove"));
+        tr.appendChild(createActionCell([
+            {href: `/updateTender?id=${t.sourceId}`, text: "Update", className: "edit"},
+            {href: `/removeTender?id=${t.sourceId}`, text: "Remove", className: "delete"}
+        ]));
     }
 
     function renderPurchaser(p) {
@@ -137,7 +195,9 @@
             <td>${p.sid}</td>
             <td>${p.name}</td>
         `;
-        tr.appendChild(createLinkCell(`/updatePurchaser?id=${p.tender_src_id}`, "Update"));
+        tr.appendChild(createActionCell([
+            {href: `/updatePurchaser?id=${p.tender_src_id}`, text: "Update", className: "edit"}
+        ]));
     }
 
     function renderType(t) {
@@ -148,7 +208,9 @@
             <td>${t.name}</td>
             <td>${t.slug}</td>
         `;
-        tr.appendChild(createLinkCell(`/updateType?id=${t.tender_src_id}`, "Update"));
+        tr.appendChild(createActionCell([
+            {href: `/updateType?id=${t.tender_src_id}`, text: "Update", className: "edit"}
+        ]));
     }
 
     function renderAwardeds(list) {
@@ -166,7 +228,9 @@
                 <td>${a.offersCount ?? ""}</td>
                 <td>${a.value ?? ""}</td>
             `;
-            tr.appendChild(createLinkCell(`/updateAwarded?id=${a.id}`, "Update"));
+            tr.appendChild(createActionCell([
+                {href: `/updateAwarded?id=${a.id}`, text: "Update", className: "edit"}
+            ]));
             tbody.appendChild(tr);
         });
     }
@@ -176,10 +240,125 @@
         if (id) {
             loadTenderDetails(id);
         } else {
-            alert("No tender ID provided.");
+            showError("No tender ID provided");
+            document.body.innerHTML = `
+                <div class="error-container">
+                    <div class="error-box">
+                        <div class="error-icon">⚠️</div>
+                        <h1 class="error-title">Error</h1>
+                        <p class="error-message">No tender ID provided</p>
+                        <div class="button-container">
+                            <a href="/allTenders" class="button">Return to Tenders</a>
+                        </div>
+                    </div>
+                </div>`;
         }
     });
 </script>
 
+<style>
+    .page-title {
+        margin-bottom: 30px;
+        color: #2c3e50;
+    }
+
+    .section {
+        margin-bottom: 40px;
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .section-title {
+        color: #2c3e50;
+        font-size: 1.5em;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #eee;
+    }
+
+    .details-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+    }
+
+    .details-table th {
+        background-color: #f8f9fa;
+        color: #2c3e50;
+        font-weight: 600;
+        text-align: left;
+        padding: 12px;
+        border-bottom: 2px solid #eee;
+    }
+
+    .details-table td {
+        padding: 12px;
+        border-bottom: 1px solid #eee;
+        color: #444;
+    }
+
+    .details-table tr:hover {
+        background-color: #f8f9fa;
+    }
+
+    .url-link {
+        color: #3498db;
+        text-decoration: none;
+    }
+
+    .url-link:hover {
+        text-decoration: underline;
+    }
+
+    .actions {
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+        min-width: 140px;
+        padding: 12px;
+    }
+
+    .action-button {
+        padding: 6px 12px !important;
+        font-size: 14px !important;
+        min-width: 70px;
+        text-align: center;
+        margin: 0;
+        flex: 0 0 auto;
+    }
+
+    .action-button.edit {
+        background-color: #3498db;
+    }
+
+    .action-button.edit:hover {
+        background-color: #2980b9;
+    }
+
+    .action-button.delete {
+        background-color: #e74c3c;
+    }
+
+    .action-button.delete:hover {
+        background-color: #c0392b;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .fade-in {
+        animation: fadeIn 0.5s ease-out;
+    }
+</style>
 </body>
 </html>

@@ -5,7 +5,8 @@
     <meta charset="UTF-8">
     <title>Update Purchaser</title>
     <link th:href="@{/style_forms.css}" rel="stylesheet" />
-    <script>
+    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;500;600&display=swap" rel="stylesheet">
+    <script th:inline="javascript">
         const takenIDs = [[${TakenIDs}]];
 
         function validateSourceId() {
@@ -26,30 +27,124 @@
     </script>
 </head>
 <body>
-<h1>Edit Purchaser</h1>
+<div class="container">
+    <h1>Edit Purchaser</h1>
 
-<form action="#" th:action="@{/updatePurchaser}" th:object="${purchaser}" method="post">
-    <label for="id">ID:</label>
-    <input type="number" id="id" placeholder="ID" th:field="*{id}" readonly>
+    <form action="#" th:action="@{/updatePurchaser}" th:object="${purchaser}" method="post" class="modern-form">
+        <div class="form-group">
+            <label for="id">ID:</label>
+            <input type="number" id="id" placeholder="ID" th:field="*{id}" readonly class="form-input readonly-input">
+        </div>
 
-    <label for="tender_src_id">Tender Source ID:</label>
-    <input type="number" id="tender_src_id" placeholder="Tender Src Id" th:field="*{tender_src_id}" readonly>
+        <div class="form-group">
+            <label for="tender_src_id">Tender Source ID:</label>
+            <input type="number" id="tender_src_id" placeholder="Tender Src Id" th:field="*{tender_src_id}" readonly class="form-input readonly-input">
+        </div>
 
-    <label for="sourceId">Source ID:</label>
-    <input type="number" id="sourceId" placeholder="Src Id"
-           th:field="*{sourceId}"
-           th:attr="readonly=${purchaser.sourceId != 0}, min=${purchaser.sourceId == 0 ? 1 : null}"
-           required
-           oninput="validateSourceId()">
-    <span id="errorSourceId" style="color: red; font-size: small;"></span>
+        <div class="form-group">
+            <label for="sourceId">Source ID:</label>
+            <input type="number" id="sourceId" placeholder="Src Id"
+                   th:field="*{sourceId}"
+                   th:attr="readonly=${purchaser.sourceId != 0}, min=${purchaser.sourceId == 0 ? 1 : null}"
+                   required
+                   oninput="validateSourceId()"
+                   class="form-input">
+            <span id="errorSourceId" class="error-message"></span>
+        </div>
 
-    <label for="sid">SID:</label>
-    <input type="text" id="sid" placeholder="SID" th:field="*{sid}" required>
+        <div class="form-group">
+            <label for="sid">SID:</label>
+            <input type="text" id="sid" placeholder="SID" th:field="*{sid}" required class="form-input">
+        </div>
 
-    <label for="name">Name:</label>
-    <input type="text" id="name" placeholder="Name" th:field="*{name}" required>
+        <div class="form-group">
+            <label for="name">Name:</label>
+            <input type="text" id="name" placeholder="Name" th:field="*{name}" required class="form-input">
+        </div>
 
-    <input id="submit" type="submit" value="Submit">
-</form>
+        <div class="button-group">
+            <input id="submit" type="submit" value="Submit" class="submit-button">
+        </div>
+    </form>
+</div>
+
+<style>
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .modern-form {
+        background: white;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        color: #2c3e50;
+    }
+
+    .form-input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        font-size: 14px;
+        transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    .form-input:focus {
+        border-color: #3498db;
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+    }
+
+    .readonly-input {
+        background-color: #f8f9fa;
+        cursor: not-allowed;
+    }
+
+    .error-message {
+        display: block;
+        color: #e74c3c;
+        font-size: 13px;
+        margin-top: 5px;
+    }
+
+    .button-group {
+        margin-top: 30px;
+        text-align: right;
+    }
+
+    .submit-button {
+        background-color: #3498db;
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .submit-button:hover {
+        background-color: #2980b9;
+    }
+
+    .submit-button:disabled {
+        background-color: #95a5a6;
+        cursor: not-allowed;
+    }
+</style>
 </body>
 </html>

@@ -5,42 +5,148 @@
     <meta charset="UTF-8">
     <title>Update Tender</title>
     <link href="/style_forms.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
-<h1>Edit Tender</h1>
-<h1 id="headerSourceId"></h1>
+<div class="container">
+    <h1>Edit Tender</h1>
+    <h1 id="headerSourceId"></h1>
 
-<form id="tenderForm">
-    <label for="id">ID:</label>
-    <input type="number" id="id" name="id" readonly>
+    <form id="tenderForm" class="modern-form">
+        <div class="form-group">
+            <label for="id">ID:</label>
+            <input type="number" id="id" name="id" readonly class="readonly-input">
+        </div>
 
-    <label for="sourceId">Source ID:</label>
-    <input type="number" id="sourceId" name="sourceId" readonly>
+        <div class="form-group">
+            <label for="sourceId">Source ID:</label>
+            <input type="number" id="sourceId" name="sourceId" readonly class="readonly-input">
+        </div>
 
-    <label for="date">Start Date:</label>
-    <input type="date" id="date" name="date" required>
+        <div class="form-group">
+            <label for="date">Start Date:</label>
+            <input type="date" id="date" name="date" required class="date-input">
+        </div>
 
-    <label for="deadlineDate">Deadline Date:</label>
-    <input type="date" id="deadlineDate" name="deadlineDate" required>
-    <span id="errorDates" style="color: red; font-size: small;"></span>
+        <div class="form-group">
+            <label for="deadlineDate">Deadline Date:</label>
+            <input type="date" id="deadlineDate" name="deadlineDate" required class="date-input">
+            <span id="errorDates" class="error-message"></span>
+        </div>
 
-    <label for="deadlineLengthDays">Deadline Length (Days):</label>
-    <input type="number" id="deadlineLengthDays" name="deadlineLengthDays" readonly>
+        <div class="form-group">
+            <label for="deadlineLengthDays">Deadline Length (Days):</label>
+            <input type="number" id="deadlineLengthDays" name="deadlineLengthDays" readonly class="readonly-input">
+        </div>
 
-    <label for="title">Title:</label>
-    <input type="text" id="title" name="title" required>
+        <div class="form-group">
+            <label for="title">Title:</label>
+            <input type="text" id="title" name="title" required>
+        </div>
 
-    <label for="category">Category:</label>
-    <input type="text" id="category" name="category" required>
+        <div class="form-group">
+            <label for="category">Category:</label>
+            <input type="text" id="category" name="category" required>
+        </div>
 
-    <label for="sid">SID:</label>
-    <input type="number" id="sid" name="sid" required>
+        <div class="form-group">
+            <label for="sid">SID:</label>
+            <input type="number" id="sid" name="sid" required>
+        </div>
 
-    <label for="sourceUrl">Source URL:</label>
-    <input type="text" id="sourceUrl" name="sourceUrl" required>
+        <div class="form-group">
+            <label for="sourceUrl">Source URL:</label>
+            <input type="text" id="sourceUrl" name="sourceUrl" required>
+        </div>
 
-    <button type="submit" id="submit">Submit</button>
-</form>
+        <div class="button-group">
+            <button type="submit" id="submit" class="submit-button">Submit</button>
+        </div>
+    </form>
+</div>
+
+<style>
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.modern-form {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #2c3e50;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: border-color 0.3s;
+}
+
+.form-group input:focus {
+    border-color: #3498db;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+.readonly-input {
+    background-color: #f8f9fa;
+    cursor: not-allowed;
+}
+
+.date-input {
+    font-family: inherit;
+}
+
+.error-message {
+    display: block;
+    color: #e74c3c;
+    font-size: 13px;
+    margin-top: 5px;
+}
+
+.button-group {
+    margin-top: 30px;
+    text-align: right;
+}
+
+.submit-button {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.submit-button:hover {
+    background-color: #2980b9;
+}
+
+.submit-button:disabled {
+    background-color: #95a5a6;
+    cursor: not-allowed;
+}
+</style>
 
 <script>
     const form = document.getElementById('tenderForm');

@@ -4,6 +4,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
     <link th:href="@{/style.css}" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;500;600&display=swap" rel="stylesheet">
     <title>Suppliers</title>
 </head>
 <body>
@@ -12,38 +13,149 @@
     <a href="/allSuppliers" class="navbar-link">All Suppliers</a>
 </nav>
 
-<div class="button-container">
-    <a href="/addSupplier" class="button">Add Supplier</a>
+<div class="container">
+    <h1>All Suppliers</h1>
+    <div class="button-container">
+        <a href="/addSupplier" class="button">Add Supplier</a>
+    </div>
+
+    <div class="table-container">
+        <div id="loading" class="loading">Loading suppliers...</div>
+        <table id="suppliersTable" style="display: none;">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Source ID</th>
+                    <th>Name</th>
+                    <th>Slug</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr th:each="supplier : ${suppliers}" class="supplier-row">
+                    <td th:text="${supplier.id}"></td>
+                    <td th:text="${supplier.source_id}"></td>
+                    <td th:text="${supplier.name}"></td>
+                    <td th:text="${supplier.slug}"></td>
+                    <td class="actions">
+                        <a th:href="@{/updateSupplier(id=${supplier.source_id})}" class="button action-button edit">
+                            Update
+                        </a>
+                        <a th:href="@{/removeSupplier(id=${supplier.source_id})}" class="button action-button delete">
+                            Remove
+                        </a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 </div>
 
-<h1>All Suppliers</h1>
-<table  id="suppliersTable">
-    <thead>
-        <tr>
-            <td>ID</td>
-            <td>Source ID</td>
-            <td>Name</td>
-            <td>Slug</td>
-            <td>Edit</td>
-            <td>Delete</td>
-         </tr>
-    </thead>
+<script src="/main.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const table = document.getElementById('suppliersTable');
+        const loadingElement = document.getElementById('loading');
 
-    <tbody>
-        <tr th:each="supplier : ${suppliers}" class="supplier-row">
-            <td th:text="${supplier.id}"></td>
-            <td th:text="${supplier.source_id}"></td>
-            <td th:text="${supplier.name}"></td>
-            <td th:text="${supplier.slug}"></td>
-            <td>
-                <a th:href="@{/updateSupplier(id=${supplier.source_id})}">Update Supplier</a>
-            </td>
-            <td>
-                <a th:href="@{/removeSupplier(id=${supplier.source_id})}">Remove Supplier</a>
-            </td>
-        </tr>
-    </tbody>
-</table>
+        // Show table and hide loading after a short delay (simulating data load)
+        setTimeout(() => {
+            loadingElement.style.display = 'none';
+            table.style.display = 'table';
+            table.classList.add('fade-in');
+        }, 300);
 
+        // Add row hover effect
+        const rows = document.querySelectorAll('.supplier-row');
+        rows.forEach(row => {
+            row.addEventListener('mouseenter', () => {
+                row.style.transition = 'background-color 0.3s ease';
+            });
+        });
+    });
+</script>
+
+<style>
+    .table-container {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        margin-top: 20px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+    th {
+        background-color: #f8f9fa;
+        color: #2c3e50;
+        font-weight: 600;
+        text-align: left;
+        padding: 12px;
+        border-bottom: 2px solid #eee;
+    }
+
+    td {
+        padding: 12px;
+        border-bottom: 1px solid #eee;
+        vertical-align: middle;
+    }
+
+    .supplier-row:hover {
+        background-color: #f8f9fa;
+    }
+
+    .actions {
+        display: flex;
+        gap: 8px;
+        justify-content: flex-end;
+        min-width: 140px;
+        border-bottom: none;
+    }
+
+    .action-button {
+        padding: 6px 12px !important;
+        font-size: 14px !important;
+        min-width: 60px;
+        text-align: center;
+        margin: 0;
+        flex: 0 0 auto;
+    }
+
+    .action-button.edit {
+        background-color: #3498db;
+    }
+
+    .action-button.edit:hover {
+        background-color: #2980b9;
+    }
+
+    .action-button.delete {
+        background-color: #e74c3c;
+    }
+
+    .action-button.delete:hover {
+        background-color: #c0392b;
+    }
+
+    .fade-in {
+        animation: fadeIn 0.5s ease-out;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
 </body>
 </html>

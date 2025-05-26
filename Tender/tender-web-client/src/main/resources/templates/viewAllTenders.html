@@ -4,6 +4,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8" />
     <link href="/style.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;500;600&display=swap" rel="stylesheet">
     <title>All Tenders</title>
 </head>
 <body>
@@ -12,34 +13,41 @@
     <a href="/allSuppliers" class="navbar-link">All Suppliers</a>
 </nav>
 
-<h1>All Tenders</h1>
-<div class="button-container">
-    <a href="/addTender" class="button">Add Tender</a>
+<div class="container">
+    <h1>All Tenders</h1>
+    <div class="button-container">
+        <a href="/addTender" class="button">Add Tender</a>
+    </div>
+
+    <div class="table-container">
+        <div id="loading" class="loading">Loading tenders...</div>
+        <table id="tendersTable" style="display: none;">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Source ID</th>
+                <th>Date</th>
+                <th>Deadline Date</th>
+                <th>DD Length Date</th>
+                <th>Title</th>
+                <th>Category</th>
+                <th>SID</th>
+                <th>Source URL</th>
+                <th>More Information</th>
+            </tr>
+            </thead>
+            <tbody id="tendersBody">
+            </tbody>
+        </table>
+    </div>
 </div>
 
-<table id="tendersTable">
-    <thead>
-    <tr>
-        <td>ID</td>
-        <td>Source ID</td>
-        <td>Date</td>
-        <td>Deadline Date</td>
-        <td>DD Length Date</td>
-        <td>Title</td>
-        <td>Category</td>
-        <td>SID</td>
-        <td>Source URL</td>
-        <td>More Information</td>
-    </tr>
-    </thead>
-    <tbody id="tendersBody">
-
-
-    </tbody>
-</table>
-
+<script src="/main.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', () => {
+        const loadingElement = document.getElementById('loading');
+        const table = document.getElementById('tendersTable');
+        
         fetch('https://tin-web-api.onrender.com/tenders/allTenders')
             .then(response => {
                 if (!response.ok) {
@@ -54,35 +62,60 @@
                     tr.className = 'tender-row';
                     tr.dataset.id = t.sourceId;
 
+                    // Format dates
+                    const formatDate = (dateString) => {
+                        if (!dateString) return '';
+                        const date = new Date(dateString);
+                        return date.toLocaleDateString('en-GB', {
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric'
+                        });
+                    };
+
                     tr.innerHTML = `
-              <td>${t.id}</td>
-              <td class="source-id">${t.sourceId}</td>
-              <td class="date">${t.date ?? ''}</td>
-              <td class="deadline-date">${t.deadlineDate ?? ''}</td>
-              <td class="deadline-length">${t.deadlineLengthDays ?? ''}</td>
-              <td class="title">${t.title}</td>
-              <td class="category">${t.category}</td>
-              <td class="sid">${t.sid}</td>
-              <td>
-                <a href="${t.sourceUrl}" class="source-url" target="_blank" rel="noopener">
-                  ${t.sourceUrl}
-                </a>
-              </td>
-              <td>
-                <a href="/TenderDetails?id=${encodeURIComponent(t.sourceId)}" class="details-link">
-                  Tender Details
-                </a>
-              </td>
-            `;
+                        <td>${t.id}</td>
+                        <td class="source-id">${t.sourceId}</td>
+                        <td class="date">${formatDate(t.date)}</td>
+                        <td class="deadline-date">${formatDate(t.deadlineDate)}</td>
+                        <td class="deadline-length">${t.deadlineLengthDays ?? ''}</td>
+                        <td class="title">${t.title}</td>
+                        <td class="category">${t.category}</td>
+                        <td class="sid">${t.sid}</td>
+                        <td>
+                            <a href="${t.sourceUrl}" class="source-url" target="_blank" rel="noopener">
+                                View Source
+                            </a>
+                        </td>
+                        <td>
+                            <a href="/TenderDetails?id=${encodeURIComponent(t.sourceId)}" class="details-link button">
+                                Details
+                            </a>
+                        </td>
+                    `;
                     tbody.appendChild(tr);
+                });
+
+                // Hide loading and show table
+                loadingElement.style.display = 'none';
+                table.style.display = 'table';
+
+                // Add row click handler
+                const rows = tbody.querySelectorAll('tr');
+                rows.forEach(row => {
+                    row.addEventListener('click', (e) => {
+                        // Don't trigger if clicking on links
+                        if (e.target.tagName === 'A') return;
+                        
+                        const id = row.dataset.id;
+                        window.location.href = `/TenderDetails?id=${encodeURIComponent(id)}`;
+                    });
                 });
             })
             .catch(err => {
                 console.error('Error loading tenders:', err);
-                const tbody = document.getElementById('tendersBody');
-                const tr = document.createElement('tr');
-                tr.innerHTML = `<td colspan="10">Failed to load tenders.</td>`;
-                tbody.appendChild(tr);
+                loadingElement.textContent = 'Failed to load tenders. Please try again later.';
+                loadingElement.style.color = '#e74c3c';
             });
     });
 </script>

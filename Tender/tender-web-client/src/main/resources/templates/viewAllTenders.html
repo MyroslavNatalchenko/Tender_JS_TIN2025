@@ -4,7 +4,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8" />
     <link href="/style.css" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;500;600&display=swap" rel="stylesheet">
     <title>All Tenders</title>
 </head>
 <body>
@@ -62,7 +61,6 @@
                     tr.className = 'tender-row';
                     tr.dataset.id = t.sourceId;
 
-                    // Format dates
                     const formatDate = (dateString) => {
                         if (!dateString) return '';
                         const date = new Date(dateString);
@@ -96,15 +94,12 @@
                     tbody.appendChild(tr);
                 });
 
-                // Hide loading and show table
                 loadingElement.style.display = 'none';
                 table.style.display = 'table';
 
-                // Add row click handler
                 const rows = tbody.querySelectorAll('tr');
                 rows.forEach(row => {
                     row.addEventListener('click', (e) => {
-                        // Don't trigger if clicking on links
                         if (e.target.tagName === 'A') return;
                         
                         const id = row.dataset.id;

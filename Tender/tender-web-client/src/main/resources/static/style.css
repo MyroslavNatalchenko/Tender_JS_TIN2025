@@ -25,7 +25,6 @@ h2 {
     font-weight: 500;
 }
 
-/* Button styles */
 .button-container {
     text-align: center;
     margin: 30px 0;
@@ -50,7 +49,6 @@ h2 {
     transform: translateY(-2px);
 }
 
-/* Table styles */
 table {
     width: 90%;
     max-width: 1200px;
@@ -92,7 +90,6 @@ table tr:hover {
     transition: background-color 0.2s ease;
 }
 
-/* Navigation bar styles */
 .navbar {
     background-color: #2c3e50;
     width: 100%;
@@ -123,7 +120,6 @@ table tr:hover {
     transform: translateY(-1px);
 }
 
-/* Links styling */
 a {
     color: #3498db;
     text-decoration: none;
@@ -135,7 +131,6 @@ a:hover {
     text-decoration: underline;
 }
 
-/* Loading animation */
 .loading {
     text-align: center;
     padding: 20px;
@@ -154,7 +149,6 @@ a:hover {
     60%, 100% { content: "..."; }
 }
 
-/* Responsive design */
 @media (max-width: 768px) {
     h1 {
         font-size: 1.8em;
@@ -190,7 +184,6 @@ a:hover {
     }
 }
 
-/* Container layout */
 .container {
     max-width: 1200px;
     margin: 0 auto;
@@ -206,7 +199,6 @@ a:hover {
     overflow-x: auto;
 }
 
-/* Loading state */
 .loading {
     text-align: center;
     padding: 40px;
@@ -215,7 +207,6 @@ a:hover {
     font-weight: 500;
 }
 
-/* Table enhancements */
 table {
     width: 100%;
     margin: 0;
@@ -255,7 +246,6 @@ table {
     transform: translateY(-1px);
 }
 
-/* Responsive enhancements */
 @media (max-width: 768px) {
     .container {
         padding: 0 10px;
@@ -276,36 +266,6 @@ table {
     }
 }
 
-/* Animation classes */
-.fade-in {
-    animation: fadeIn 0.3s ease-in;
-}
-
-.slide-in {
-    animation: slideIn 0.3s ease-out;
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
-}
-
-@keyframes slideIn {
-    from {
-        transform: translateY(20px);
-        opacity: 0;
-    }
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
-}
-
-/* Focus styles */
 .focused {
     position: relative;
 }

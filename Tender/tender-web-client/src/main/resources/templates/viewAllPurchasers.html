@@ -4,7 +4,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
     <link th:href="@{/style.css}" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;500;600&display=swap" rel="stylesheet">
     <title>Purchasers</title>
 </head>
 <body>
@@ -48,14 +47,12 @@
         const table = document.getElementById('purchasersTable');
         const loadingElement = document.getElementById('loading');
 
-        // Show table and hide loading after a short delay (simulating data load)
         setTimeout(() => {
             loadingElement.style.display = 'none';
             table.style.display = 'table';
             table.classList.add('fade-in');
         }, 300);
 
-        // Add row hover effect
         const rows = document.querySelectorAll('.purchaser-row');
         rows.forEach(row => {
             row.addEventListener('mouseenter', () => {

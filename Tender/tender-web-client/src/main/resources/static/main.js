@@ -1,4 +1,3 @@
-// Add loading indicator
 function showLoading(element) {
     element.classList.add('loading');
 }
@@ -7,7 +6,6 @@ function hideLoading(element) {
     element.classList.remove('loading');
 }
 
-// Table row hover effect with subtle animation
 document.addEventListener('DOMContentLoaded', () => {
     const tables = document.querySelectorAll('table');
     tables.forEach(table => {
@@ -19,28 +17,15 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Add form validation and enhanced user feedback
     const forms = document.querySelectorAll('form');
     forms.forEach(form => {
         const inputs = form.querySelectorAll('input, select');
         inputs.forEach(input => {
-            // Add validation feedback
             input.addEventListener('input', () => {
-                validateInput(input);
-            });
-
-            // Add focus effects
-            input.addEventListener('focus', () => {
-                input.parentElement.classList.add('focused');
-            });
-
-            input.addEventListener('blur', () => {
-                input.parentElement.classList.remove('focused');
                 validateInput(input);
             });
         });
 
-        // Form submission handling
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -51,7 +36,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 try {
-                    // Your form submission logic here
                     await submitForm(form);
                     showSuccess('Form submitted successfully!');
                 } catch (error) {
@@ -65,7 +49,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Add smooth scroll to top button
     const scrollButton = document.createElement('button');
     scrollButton.innerHTML = '↑';
     scrollButton.className = 'scroll-top';
@@ -106,7 +89,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// Form validation helper functions
 function validateInput(input) {
     const errorElement = input.nextElementSibling;
     if (!errorElement || !errorElement.classList.contains('error-message')) {
@@ -138,7 +120,6 @@ function validateForm(form) {
     return isValid;
 }
 
-// Toast notifications
 function createToast(message, type) {
     const toast = document.createElement('div');
     toast.className = `toast ${type}`;
@@ -159,8 +140,6 @@ function createToast(message, type) {
     `;
 
     document.body.appendChild(toast);
-    
-    // Trigger reflow
     toast.offsetHeight;
     
     toast.style.opacity = '1';
@@ -183,12 +162,10 @@ function showError(message) {
     createToast(message, 'error');
 }
 
-// Async form submission helper
 async function submitForm(form) {
     const formData = new FormData(form);
     const data = Object.fromEntries(formData.entries());
     
-    // Replace with your actual API endpoint
     const response = await fetch(form.action, {
         method: form.method || 'POST',
         headers: {
